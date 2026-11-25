@@ -24,8 +24,8 @@ La numeración es única en todo el proyecto y continúa de un ciclo al siguient
 
 | Tipo | Siguiente |
 |---|---|
-| H (historia) | 1 |
-| R (requisito) | 1 |
+| H (historia) | 7 |
+| R (requisito) | 7 |
 | T (test) | 1 |
 | TA (tarea) | 1 |
 | G (hueco) | 1 |

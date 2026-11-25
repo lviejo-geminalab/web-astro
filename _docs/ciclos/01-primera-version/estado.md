@@ -16,7 +16,7 @@ Estados posibles (se escriben siempre así):
 |---|---|---|---|---|
 | 0 Apertura | idea del ciclo | hecho | 2026-11-25 | |
 | 1 Brief | `brief.md` | aprobado | 2026-11-25 | |
-| 2 Historias | `historias.md` | pendiente | | |
+| 2 Historias | `historias.md` | aprobado | 2026-11-25 | |
 | 3 Arquitectura | `_docs/arquitectura.md` | pendiente | | |
 | 4 SDD | `sdd-[nombre].md` | pendiente | | |
 | 5 Tareas | `tareas-[nombre].md` | pendiente | | |
