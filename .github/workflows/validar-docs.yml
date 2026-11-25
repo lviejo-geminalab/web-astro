@@ -1,0 +1,28 @@
+name: Validar docs
+
+# Comprueba la coherencia de _docs/ con _flujo/validar.mjs (Node sin dependencias, solo lectura).
+# Valida el ciclo activo: los documentos de ciclos cerrados no se modifican y no deben dejar el CI en rojo.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # R-PRG-05 comprueba que los commits de la tabla «Tareas» de estado.md existen; un clon superficial no los tiene.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Pruebas del validador
+        run: node --test "_flujo/pruebas/*.test.mjs"
+      - name: Validar _docs/
+        run: node _flujo/validar.mjs

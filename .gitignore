@@ -1,0 +1,14 @@
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+
+# Añade aquí lo propio de tu stack cuando el brief lo fije
