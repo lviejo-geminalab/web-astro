@@ -1,7 +1,7 @@
 # Estado del ciclo
 
 Ciclo: 01-primera-version
-Vía: [completa | corta] — se fija al aprobar el brief
+Vía: completa
 
 Estados posibles (se escriben siempre así):
 
@@ -15,7 +15,7 @@ Estados posibles (se escriben siempre así):
 | Fase | Documento | Estado | Fecha | Notas |
 |---|---|---|---|---|
 | 0 Apertura | idea del ciclo | hecho | 2026-11-25 | |
-| 1 Brief | `brief.md` | pendiente | | |
+| 1 Brief | `brief.md` | aprobado | 2026-11-25 | |
 | 2 Historias | `historias.md` | pendiente | | |
 | 3 Arquitectura | `_docs/arquitectura.md` | pendiente | | |
 | 4 SDD | `sdd-[nombre].md` | pendiente | | |

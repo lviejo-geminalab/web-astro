@@ -15,6 +15,8 @@ Estados (no se traducen): `previsto`, `abierto`, `cerrado`, `descartado`.
 | Nº | Carpeta | Objetivo | Estado | Origen | Abierto | Cerrado |
 |---|---|---|---|---|---|---|
 | 01 | _docs/ciclos/01-primera-version | Primera versión de la web del despacho de abogados, mobile first y centrada en SEO local | abierto | kickoff | 2026-11-25 | |
+| | | Equipo y sobre el despacho: páginas de abogados y presentación del despacho | descartado | brief | | |
+| | | Blog de artículos jurídicos para SEO de contenido | previsto | brief | | |
 
 ## Siguiente identificador libre
 
