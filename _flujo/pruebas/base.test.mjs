@@ -55,7 +55,7 @@ test('crear-base: crea la base con todas las tablas, la versión y permisos rest
   assert.equal(r.codigo, 0, r.salida);
   assert.match(r.salida, /Base creada/);
   const db = new DatabaseSync(ruta);
-  assert.equal(db.prepare("SELECT count(*) AS n FROM sqlite_master WHERE type = 'table'").get().n, 17);
+  assert.equal(db.prepare("SELECT count(*) AS n FROM sqlite_master WHERE type = 'table'").get().n, 18);
   assert.equal(db.prepare("SELECT valor FROM meta WHERE clave = 'esquema_version'").get().valor, '1');
   db.close();
   if (process.platform !== 'win32') assert.equal(fs.statSync(ruta).mode & 0o777, 0o600);
@@ -208,4 +208,14 @@ test('esquema: el contador solo numera los tipos de identificador del flujo', ()
   rechaza(db, "INSERT INTO contador (proyecto_id, tipo, siguiente) VALUES (1, 'X', 1)");
   rechaza(db, "INSERT INTO contador (proyecto_id, tipo, siguiente) VALUES (1, 'H', 3)");
   rechaza(db, "INSERT INTO contador (proyecto_id, tipo, siguiente) VALUES (1, 'R', 0)");
+});
+
+test('esquema: el catálogo de fases da nombre a cada número y la 7 y la 8 no llevan estado', () => {
+  const db = baseEnMemoria();
+  const filas = db.prepare('SELECT numero, nombre, con_estado FROM fase_definicion ORDER BY numero').all();
+  assert.deepEqual(filas.map((f) => f.numero), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  assert.equal(filas.find((f) => f.numero === 1).nombre, 'brief');
+  assert.deepEqual(filas.filter((f) => !f.con_estado).map((f) => f.numero), [7, 8]);
+  // Las fases con estado del catálogo son exactamente las que se pueden guardar en `fase`.
+  assert.deepEqual(filas.filter((f) => f.con_estado).map((f) => f.numero), [0, 1, 2, 3, 4, 5, 6, 9]);
 });

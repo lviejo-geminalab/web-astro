@@ -61,12 +61,36 @@ CREATE TABLE ciclo (
 -- Solo un ciclo abierto por proyecto.
 CREATE UNIQUE INDEX un_ciclo_abierto ON ciclo (proyecto_id) WHERE estado = 'abierto';
 
+-- Las fases de la plantilla: número, nombre y comando. Es el catálogo que dice qué es cada número en `fase`.
+-- Lo carga el propio esquema; si la plantilla cambia una fase (la renombra, añade o quita una), el cambio entra
+-- aquí en la misma versión del esquema que lo trae y `vigente_desde` dice desde cuál. La 7 y la 8 figuran con
+-- `con_estado = 0`: no se aprueban, su avance está en las tareas, y por eso no tienen fila en `fase`.
+CREATE TABLE fase_definicion (
+  numero        INTEGER PRIMARY KEY,
+  nombre        TEXT NOT NULL UNIQUE,
+  comando       TEXT NOT NULL,
+  que_hace      TEXT NOT NULL,
+  con_estado    INTEGER NOT NULL DEFAULT 1 CHECK (con_estado IN (0, 1)),
+  vigente_desde INTEGER NOT NULL            -- versión del esquema en la que entró
+);
+INSERT INTO fase_definicion (numero, nombre, comando, que_hace, con_estado, vigente_desde) VALUES
+  (0, 'kickoff / apertura de ciclo', '/kickoff, /ciclo', 'Registra el proyecto o abre un ciclo nuevo con su idea', 1, 1),
+  (1, 'brief', '/brief', 'Fija el problema, el alcance, la vía y la hoja de ruta', 1, 1),
+  (2, 'historias', '/historias', 'Historias de usuario y requisitos con criterios de aceptación', 1, 1),
+  (3, 'arquitectura', '/arquitectura', 'Artefactos, stack y decisiones técnicas, con su revisión', 1, 1),
+  (4, 'SDD', '/sdd', 'Diseño detallado de cada grupo de historias', 1, 1),
+  (5, 'tareas', '/tareas', 'Plan de tareas atómicas con sus tests', 1, 1),
+  (6, 'verificación', '/verificar', 'Comprueba que los documentos son coherentes antes de implementar', 1, 1),
+  (7, 'implementación', '/implementar', 'Una tarea por commit, en ciclo TDD', 0, 1),
+  (8, 'revisión', '/revisar', 'Revisa cada commit de forma aislada', 0, 1),
+  (9, 'cierre', '/cerrar', 'Deja `_docs/sistema.md` al día y cierra el ciclo', 1, 1);
+
 -- Fases por ciclo: 0, 1, 2, 3, 4, 5, 6 y 9, una fila de cada una. La 7 y la 8 no se aprueban (su avance está en las tareas).
 -- Las filas de las fases 4 y 5 resumen el estado de todos los SDD del ciclo; las escribe el comando a partir de `sdd`.
 CREATE TABLE fase (
   id        INTEGER PRIMARY KEY,
   ciclo_id  INTEGER NOT NULL REFERENCES ciclo(id),
-  numero    INTEGER NOT NULL CHECK (numero IN (0, 1, 2, 3, 4, 5, 6, 9)),
+  numero    INTEGER NOT NULL REFERENCES fase_definicion(numero) CHECK (numero IN (0, 1, 2, 3, 4, 5, 6, 9)),
   estado    TEXT NOT NULL CHECK (estado IN ('pendiente', 'hecho', 'borrador', 'aprobado', 'por revisar', 'no aplica')),
   fecha     TEXT,
   notas     TEXT,
@@ -195,7 +219,8 @@ CREATE TABLE hueco (
 -- ---------- aprobaciones (decisiones 50 y 52) ----------
 -- Las decisiones de la persona (vía corta, hueco, hallazgo, riesgo, abrir ciclo) NO tienen tabla: su frase vive en los
 -- documentos, que son el contexto de los agentes, y el validador comprueba que esté (decisión 52).
--- Solo aprobar una fase, volver a aprobarla tras un cambio y cerrar el ciclo llevan aviso de permiso.
+-- Solo aprobar una fase, volver a aprobarla tras un cambio y cerrar el ciclo se registran aquí. El valor `aviso de permiso`
+-- es el nombre histórico (D94); desde D98 significa «aprobada con el comando `aprobar`, tras el Sí de la persona».
 -- `sdd_id` solo en las fases 4 y 5, que se aprueban por SDD: lo comprueba el validador.
 CREATE TABLE aprobacion (
   id          INTEGER PRIMARY KEY,

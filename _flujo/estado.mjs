@@ -40,9 +40,10 @@
 //   Aprobar una fase o un SDD (o volver a aprobarlos tras repetirlos) y cerrar un ciclo son las únicas órdenes que
 //   necesitan el sí de la persona responsable. Van todas por `aprobar` (aprobar la fase 9 cierra el ciclo), que debe ser
 //   el PRIMER argumento del script: `node _flujo/estado.mjs aprobar fase 3`. Las demás órdenes rechazan `aprobado`.
-//   El sí de la persona no lo comprueba este script: lo exige el aviso de permiso de Claude Code, que fuerza el
-//   hook `_flujo/guardia-aprobar.mjs` (registrado en `.claude/settings.json`). El hook pregunta a la persona, y se
-//   niega a dejar pasar la orden si la pide un agente aislado o si la sesión no pregunta (modo `bypassPermissions`).
+//   El sí de la persona no lo comprueba este script ni el entorno: lo exigen `_flujo/convenciones.md` y `CLAUDE.md`
+//   (el agente que conversa con ella le pregunta con un selector Sí/No y solo con el Sí ejecuta `aprobar`). Lo único que
+//   impone el entorno es que no aprueben los agentes aislados: el hook `_flujo/guardia-aprobar.mjs` (registrado en
+//   `.claude/settings.json`) los niega. Ver D98.
 //   Cada aprobación queda en la tabla `aprobacion` con el comando exacto que la hizo y en el historial como `persona`.
 //   Detalle y entornos compatibles: decisión D94 de `_flujo/DISENO.md`.
 //
@@ -240,7 +241,7 @@ function recalcularResumenes(ciclo, q) {
   }
 }
 function comprobarTransicion(de, a, que) {
-  if (a === 'aprobado') throw prohibido(`${que}: poner \`aprobado\` no se hace con este comando. La aprobación va por \`aprobar\`, con el aviso de permiso y el sí de la persona responsable`);
+  if (a === 'aprobado') throw prohibido(`${que}: poner \`aprobado\` no se hace con este comando. La aprobación va por \`aprobar\`, y solo tras el sí de la persona responsable`);
   if (a === 'por revisar') throw prohibido(`${que}: \`por revisar\` lo ponen las fases al repetirse: usa \`repetir <fase> --motivo <V|G>\``);
   if (!TRANSICIONES_FASE[de]?.includes(a)) throw prohibido(`${que}: de \`${de}\` no se puede pasar a \`${a}\`${TRANSICIONES_FASE[de]?.length ? ` (solo a ${TRANSICIONES_FASE[de].map((x) => `\`${x}\``).join(', ')})` : ''}`);
 }
@@ -791,10 +792,10 @@ const ORDENES = [
   },
   {
     orden: 'aprobar', uso: 'aprobar fase <1|2|3|6|9>   |   aprobar sdd <nombre> <sdd|tareas>',
-    flujo: 'Aprobar y publicar (fases 1, 2, 3, 4, 5, 6 y 9), también al aprobar de nuevo una fase repetida', quien: 'persona, con el aviso de permiso de Claude Code',
-    que: 'Pasa una fase (o un SDD o su plan de tareas, en las fases 4 y 5) de `borrador` a `aprobado`, anota la aprobación (fecha, vía «aviso de permiso» y el comando exacto) y el historial como `persona`. Debe ser el primer argumento del script. Un plan de tareas solo se aprueba con su SDD ya aprobado. Aprobar la fase 9 cierra además el ciclo y exige todas las tareas `aprobada`, ningún hueco `abierto` y ninguna otra fase pendiente de aprobar o `por revisar`. No admite `--quien`: quien aprueba es siempre la persona.',
+    flujo: 'Aprobar y publicar (fases 1, 2, 3, 4, 5, 6 y 9), también al aprobar de nuevo una fase repetida', quien: 'persona (su sí al selector Sí/No que le hace el agente)',
+    que: 'Pasa una fase (o un SDD o su plan de tareas, en las fases 4 y 5) de `borrador` a `aprobado`, anota la aprobación (fecha, vía «aviso de permiso», nombre histórico que se conserva en la base, y el comando exacto) y el historial como `persona`. Debe ser el primer argumento del script. Un plan de tareas solo se aprueba con su SDD ya aprobado. Aprobar la fase 9 cierra además el ciclo y exige todas las tareas `aprobada`, ningún hueco `abierto` y ninguna otra fase pendiente de aprobar o `por revisar`. No admite `--quien`: quien aprueba es siempre la persona.',
     ejecutar(ctx) {
-      if (argv[0] !== 'aprobar') throw prohibido('`aprobar` debe ser el primer argumento: `node _flujo/estado.mjs aprobar fase <n>` (así lo reconoce el aviso de permiso)');
+      if (argv[0] !== 'aprobar') throw prohibido('`aprobar` debe ser el primer argumento: `node _flujo/estado.mjs aprobar fase <n>` (así lo reconoce la guardia)');
       const comando = `estado.mjs ${argv.filter((a, i) => !(a === '--json' || (argv[i - 1] && ['--ruta', '--proyecto', '--raiz'].includes(argv[i - 1])) || ['--ruta', '--proyecto', '--raiz'].includes(a))).join(' ')}`;
       const q = 'persona';
       const fases = fasesDe(ctx.ciclo.id);

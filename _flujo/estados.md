@@ -11,7 +11,7 @@ El estado vive en la base de datos y se cambia solo con `node _flujo/estado.mjs`
 | `pendiente` | la fase no se ha ejecutado | la plantilla `_flujo/plantillas/estado.md` | | estado inicial |
 | `hecho` | fase terminada sin aprobación formal | la fase 0 | `pendiente` | solo lo usa la fase 0 |
 | `borrador` | el agente ha entregado el documento | el agente de la fase al entregar | `pendiente`, `por revisar`, `aprobado` (al repetir la fase) | las fases 3, 6 y 9 se entregan así y se aprueban después |
-| `aprobado` | la persona responsable lo ha validado | `aprobar fase <n>` o `aprobar sdd <nombre> <sdd|tareas>`, que el agente que conversa con ella ejecuta y ella confirma en el aviso de permiso | `borrador` | los agentes aislados (revisión de arquitectura, verificador, programador, revisor) nunca lo escriben |
+| `aprobado` | la persona responsable lo ha validado | `aprobar fase <n>` o `aprobar sdd <nombre> <sdd|tareas>`, que el agente que conversa con ella ejecuta solo tras su «Sí» al selector | `borrador` | los agentes aislados (revisión de arquitectura, verificador, programador, revisor) nunca lo escriben |
 | `por revisar` | una fase anterior ha cambiado y este documento puede estar desactualizado | `repetir <fase> --motivo V<n>|G<n>`, que pone la fase en `borrador` y las posteriores en `por revisar` | `aprobado`, `borrador` | las fases posteriores a la repetida |
 | `no aplica` | la fase se omite | quien la omite (fase 3 sin cambio de arquitectura; fase 2 en la vía corta) | `pendiente` | |
 

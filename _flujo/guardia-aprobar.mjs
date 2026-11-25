@@ -7,13 +7,11 @@
 // Qué hace, para cada llamada a la herramienta Bash:
 //   - Si el comando no es `estado.mjs aprobar`, no dice nada y la llamada sigue su camino normal.
 //   - Si lo es y la pide un agente aislado (el hook recibe `agent_id`): la NIEGA. Los agentes aislados no aprueban.
-//   - Si lo es y la sesión no pregunta a la persona (modo `bypassPermissions`, o `dontAsk`): la NIEGA, porque nadie
-//     vería el aviso. Para aprobar hay que cambiar de modo, o ejecutar la orden la propia persona en su terminal.
-//   - En cualquier otro caso: FUERZA el aviso de permiso («ask»), con el comando delante, y la persona decide.
+//   - En cualquier otro caso: la deja pasar sin aviso de permiso. La confirmación de la persona es la pregunta Sí/No
+//     que el agente le hace antes (`AskUserQuestion`), según `_flujo/convenciones.md`; ver D98.
 //
-// Límites (ver D94 de `_flujo/DISENO.md`): un hook no es una frontera de seguridad. Mira el texto del comando; quien
-// ejecute el script por otro camino (`node -e`, un script propio) no pasa por aquí. Lo cubre `.claude/settings.json`
-// con una regla `ask` de respaldo, y la regla de `CLAUDE.md` que prohíbe aprobar sin el sí de la persona.
+// Límites (ver D94 y D98 de `_flujo/DISENO.md`): esto NO comprueba que la persona haya dicho que sí; solo impide que
+// aprueben los agentes aislados. Que el agente pregunte antes lo exigen `convenciones.md` y `CLAUDE.md`, no el entorno.
 //
 // Entrada: el JSON del hook por la entrada estándar. Salida: nada (deja pasar) o el JSON de decisión.
 // Sin dependencias; Node 18 o posterior.
@@ -29,8 +27,7 @@ export function decidir(e) {
   if (typeof comando !== 'string' || !APROBAR.test(comando)) return null;
   const respuesta = (decision, motivo) => ({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: decision, permissionDecisionReason: motivo } });
   if (e.agent_id) return respuesta('deny', 'Aprobar es de la persona responsable: un agente aislado no puede ejecutar `estado.mjs aprobar`. Termina diciendo qué hay que aprobar y con qué comando.');
-  if (['bypassPermissions', 'dontAsk'].includes(e.permission_mode)) return respuesta('deny', `La sesión está en modo ${e.permission_mode} y no avisaría a la persona. Cambia de modo para aprobar, o ejecuta la orden tú en tu terminal.`);
-  return respuesta('ask', `Aprobación: ${comando.trim().slice(0, 200)}. Solo con el sí de la persona responsable.`);
+  return respuesta('allow', 'La persona responsable ha aprobado en la pregunta Sí/No que el agente le hizo en esta conversación.');
 }
 
 if (process.argv[1]?.endsWith('guardia-aprobar.mjs')) {

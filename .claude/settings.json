@@ -17,9 +17,6 @@
       "Bash(echo *)",
       "Bash(node _flujo/estado.mjs *)"
     ],
-    "ask": [
-      "Bash(*estado.mjs*aprobar*)"
-    ],
     "deny": [
       "Bash(git push --force*)",
       "Bash(git push -f*)",

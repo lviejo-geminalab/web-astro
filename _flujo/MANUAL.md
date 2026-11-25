@@ -12,7 +12,7 @@ La lista de comandos, con la fase de cada uno, está en `.claude/CLAUDE.md`; est
 
 1. Clona el repositorio y abre Claude Code en su carpeta, desde el terminal o la aplicación de escritorio. No uses un proyecto de Claude para esto: no carga los comandos ni los agentes del repositorio. Después ejecuta `/kickoff`. Cuéntale tu idea: pondrá nombre y descripción al proyecto en el README, abrirá el primer ciclo y escribirá tu idea en la carpeta de ese ciclo.
 2. Revisa `_docs/ciclos/01-[nombre]/idea.md` y corrígelo a mano si hace falta.
-3. Ejecuta `/clear` y después `/brief`. Responde a sus preguntas. Al terminar te pregunta si lo apruebas: dile que sí (o pídele cambios) y él ejecuta la orden de aprobar (el entorno te pide permiso: ahí confirmas), hace el commit y lo sube con `git push`.
+3. Ejecuta `/clear` y después `/brief`. Responde a sus preguntas. Al terminar te pregunta si lo apruebas: dile que sí (o pídele cambios) y te pregunta con un selector («Sí, aprobar», «No, quiero cambios» o «Revisarlo más tarde»); con el Sí ejecuta la orden de aprobar, hace el commit y lo sube con `git push`.
 4. Ejecuta `/clear` y lanza la fase siguiente. Repite hasta `/verificar`.
 
 Las fases 0 a 5 se ejecutan en la conversación principal porque necesitan preguntarte; por eso hay que limpiar el contexto con `/clear` entre una y otra. Si hay varios SDD, pasa el nombre como argumento: `/tareas pagos`.
@@ -96,7 +96,7 @@ El kickoff se hace una vez. Después el proyecto avanza por ciclos: cada ciclo e
 
 ## Reglas para las personas
 
-- **Solo tú apruebas, pero no editas nada.** Los agentes dejan sus documentos en `borrador` y te preguntan. Con tu sí explícito en la conversación, el agente ejecuta `aprobar` (el entorno te pide permiso y ahí confirmas), hace el commit y lo sube; una respuesta ambigua no cuenta. La arquitectura (fase 3) y la verificación (fase 6) se aprueban después de la revisión o del informe: basta decir «apruebo la arquitectura» o «apruebo la verificación» en una conversación. Los agentes de implementación y revisión nunca aprueban documentos.
+- **Solo tú apruebas, pero no editas nada.** Los agentes dejan sus documentos en `borrador` y te preguntan con un selector. Con tu «Sí, aprobar» (o un sí explícito escrito) el agente ejecuta `aprobar`, sin más avisos, hace el commit y lo sube; una respuesta ambigua no cuenta. La arquitectura (fase 3) y la verificación (fase 6) se aprueban después de la revisión o del informe: basta decir «apruebo la arquitectura» o «apruebo la verificación» en una conversación. Los agentes de implementación y revisión nunca aprueban documentos.
 - **Una conversación por fase.** El contexto limpio es lo que hace fiable cada fase, sobre todo la verificación y la revisión.
 - **Los errores se corrigen en su origen.** Si un documento anterior está mal, se repite su fase; no se parchea desde una posterior.
 - **Para cambios pequeños, vía corta.** El agente la propone en el brief; está descrita en `_flujo/convenciones.md`.

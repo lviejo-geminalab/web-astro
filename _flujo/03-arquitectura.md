@@ -82,7 +82,7 @@ Si la persona responsable quiere tratar los hallazgos, lo hace con el agente de 
 4. Hace un solo commit con el documento y el informe, `docs: fase 3 arquitectura (revisión)`, y `git push`. La fila de la fase 3 sigue en `borrador`.
 5. Propone una segunda revisión solo si se corrigió algo bloqueante o importante; en los demás casos es opcional y la decide la persona.
 
-Después, la persona dice "apruebo la arquitectura" y se sigue "Aprobar más tarde" de las convenciones.
+Después, el agente de la conversación principal pregunta con el selector Sí/No («¿Apruebas la arquitectura?»: «Sí, aprobar», «No, quiero cambios», «Revisarlo más tarde») y, con el Sí, sigue "Aprobar más tarde" de las convenciones. Si la persona prefiere escribir «apruebo la arquitectura», vale igual. Si no hay hallazgos que tratar, la pregunta se hace al leer el resultado de la revisión.
 
 ### Si se aprueba sin resolver todos los hallazgos
 

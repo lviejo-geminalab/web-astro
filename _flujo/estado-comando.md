@@ -122,8 +122,8 @@ Opciones comunes: `--quien` (obligatoria al cambiar estado), `--proyecto`, `--ru
 
 - **Uso:** `aprobar fase <1|2|3|6|9>   |   aprobar sdd <nombre> <sdd|tareas>`
 - **Dónde del flujo:** Aprobar y publicar (fases 1, 2, 3, 4, 5, 6 y 9), también al aprobar de nuevo una fase repetida
-- **Quién:** persona, con el aviso de permiso de Claude Code
-- **Qué hace:** Pasa una fase (o un SDD o su plan de tareas, en las fases 4 y 5) de `borrador` a `aprobado`, anota la aprobación (fecha, vía «aviso de permiso» y el comando exacto) y el historial como `persona`. Debe ser el primer argumento del script. Un plan de tareas solo se aprueba con su SDD ya aprobado. Aprobar la fase 9 cierra además el ciclo y exige todas las tareas `aprobada`, ningún hueco `abierto` y ninguna otra fase pendiente de aprobar o `por revisar`. No admite `--quien`: quien aprueba es siempre la persona.
+- **Quién:** persona (su sí al selector Sí/No que le hace el agente)
+- **Qué hace:** Pasa una fase (o un SDD o su plan de tareas, en las fases 4 y 5) de `borrador` a `aprobado`, anota la aprobación (fecha, vía «aviso de permiso», nombre histórico que se conserva en la base, y el comando exacto) y el historial como `persona`. Debe ser el primer argumento del script. Un plan de tareas solo se aprueba con su SDD ya aprobado. Aprobar la fase 9 cierra además el ciclo y exige todas las tareas `aprobada`, ningún hueco `abierto` y ninguna otra fase pendiente de aprobar o `por revisar`. No admite `--quien`: quien aprueba es siempre la persona.
 
 ### `regenerar`
 

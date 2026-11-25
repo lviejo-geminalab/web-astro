@@ -373,17 +373,16 @@ test('aprobar la fase 9 cierra el ciclo, con sus condiciones', () => {
   assert.equal(b.run('fase', '1', 'borrador', '--quien', 'x').codigo, 3, 'ya no hay ciclo abierto');
 });
 
-test('la guardia de aprobación: pregunta, y niega a los agentes aislados y a las sesiones que no preguntan', async () => {
+test('la guardia de aprobación: deja pasar a quien conversa con la persona y niega a los agentes aislados', async () => {
   const { decidir } = await import('../guardia-aprobar.mjs');
   const bash = (command, extra = {}) => ({ tool_name: 'Bash', tool_input: { command }, permission_mode: 'default', ...extra });
   const decision = (e) => decidir(e)?.hookSpecificOutput.permissionDecision ?? null;
-  assert.equal(decision(bash('node _flujo/estado.mjs aprobar fase 3')), 'ask');
-  assert.equal(decision(bash('node ./_flujo/estado.mjs aprobar sdd web sdd')), 'ask');
-  assert.equal(decision(bash("sh -c 'node _flujo/estado.mjs aprobar fase 3'")), 'ask');
-  assert.equal(decision(bash('cd x && /usr/bin/node /abs/_flujo/estado.mjs aprobar fase 9')), 'ask');
+  assert.equal(decision(bash('node _flujo/estado.mjs aprobar fase 3')), 'allow');
+  assert.equal(decision(bash('node ./_flujo/estado.mjs aprobar sdd web sdd')), 'allow');
+  assert.equal(decision(bash('node _flujo/estado.mjs aprobar fase 3', { permission_mode: 'bypassPermissions' })), 'allow');
+  assert.equal(decision(bash("sh -c 'node _flujo/estado.mjs aprobar fase 3'", { agent_id: 'a1' })), 'deny');
+  assert.equal(decision(bash('cd x && /usr/bin/node /abs/_flujo/estado.mjs aprobar fase 9', { agent_id: 'a1' })), 'deny');
   assert.equal(decision(bash('node _flujo/estado.mjs aprobar fase 3', { agent_id: 'a1', agent_type: 'revisor' })), 'deny');
-  assert.equal(decision(bash('node _flujo/estado.mjs aprobar fase 3', { permission_mode: 'bypassPermissions' })), 'deny');
-  assert.equal(decision(bash('node _flujo/estado.mjs aprobar fase 3', { permission_mode: 'dontAsk' })), 'deny');
   assert.equal(decision(bash('node _flujo/estado.mjs tarea estado TA1 implementada --quien programador')), null);
   assert.equal(decision(bash('node _flujo/estado.mjs hueco abrir --descripcion "hay que aprobar esto" --quien revisor')), null);
   assert.equal(decision({ tool_name: 'Edit', tool_input: { command: 'estado.mjs aprobar' } }), null);
@@ -393,13 +392,13 @@ test('la guardia de aprobación: pregunta, y niega a los agentes aislados y a la
 test('el hook se ejecuta como script: lee el JSON por la entrada estándar', () => {
   const r = spawnSync(process.execPath, [path.join(AQUI, '..', 'guardia-aprobar.mjs')], { input: JSON.stringify({ tool_name: 'Bash', tool_input: { command: 'node _flujo/estado.mjs aprobar fase 1' }, permission_mode: 'default' }), encoding: 'utf8' });
   assert.equal(r.status, 0);
-  assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision, 'ask');
+  assert.equal(JSON.parse(r.stdout).hookSpecificOutput.permissionDecision, 'allow');
   assert.equal(spawnSync(process.execPath, [path.join(AQUI, '..', 'guardia-aprobar.mjs')], { input: 'no es json', encoding: 'utf8' }).status, 0);
 });
 
-test('la configuración de la plantilla registra el hook y la regla de respaldo', () => {
+test('la configuración de la plantilla registra el hook y no deja una regla ask que duplique la pregunta', () => {
   const ajustes = JSON.parse(fs.readFileSync(path.join(AQUI, '..', '..', '.claude', 'settings.json'), 'utf8'));
-  assert.ok(ajustes.permissions.ask.includes('Bash(*estado.mjs*aprobar*)'));
+  assert.ok(!(ajustes.permissions.ask ?? []).some((r) => /aprobar/.test(r)));
   assert.ok(ajustes.permissions.allow.includes('Bash(node _flujo/estado.mjs *)'));
   const hook = ajustes.hooks.PreToolUse.find((h) => h.matcher === 'Bash').hooks[0];
   assert.match(hook.command, /guardia-aprobar\.mjs/);

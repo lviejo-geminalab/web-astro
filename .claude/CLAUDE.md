@@ -38,7 +38,7 @@ Este repositorio se desarrolla con un flujo por fases descrito en `_flujo/`. Cad
 - Cuando te detengas, termina diciendo qué ha pasado, dónde queda registrado y el comando exacto que sigue (`/estado` si no hay otro).
 - No modifiques los ficheros de `_flujo/` salvo que te lo pidan expresamente.
 - El estado (fases, SDD, tareas, huecos, ciclos, contadores) se cambia solo con `node _flujo/estado.mjs` (órdenes en `_flujo/estado-comando.md`); `<ciclo>/estado.md` y `_docs/proyecto.md` son copias que el comando regenera: no los edites a mano.
-- No apruebes nada por tu cuenta. `node _flujo/estado.mjs aprobar …` solo se ejecuta con el sí explícito de la persona responsable en esta conversación, siguiendo "Aprobar y publicar" de `_flujo/convenciones.md` (aprobar, commit y `git push`). Si eres un agente aislado y no puedes preguntar, nunca lo ejecutes.
+- No apruebes nada por tu cuenta. `node _flujo/estado.mjs aprobar …` solo se ejecuta después de preguntar a la persona responsable con un selector (`AskUserQuestion`: «Sí, aprobar», «No, quiero cambios», «Revisarlo más tarde») y de recibir su «Sí», o de un sí explícito escrito en esta conversación, siguiendo "Aprobar y publicar" de `_flujo/convenciones.md` (aprobar, commit y `git push`). Si eres un agente aislado y no puedes preguntar, nunca lo ejecutes.
 - Tras cada commit de fase, publica con `git push`. Si falla, no fuerces nada: dilo.
 - No modifiques documentos de fases anteriores a la tuya. Si están mal, detente, explica el problema y di el comando que sigue.
 - No modifiques, debilites ni desactives tests para que la suite pase, ni relajes el linter o el análisis de tipos.
