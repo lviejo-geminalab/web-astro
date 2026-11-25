@@ -1,8 +1,8 @@
 # Proyecto
 
-Nombre: [nombre] — se fija en el kickoff
-Inicio: [fecha] — se fija en el kickoff
-Ciclo activo: ninguno
+Nombre: web-astro
+Inicio: 2026-11-25
+Ciclo activo: _docs/ciclos/01-primera-version
 
 ## Ciclos y hoja de ruta
 
@@ -14,6 +14,7 @@ Estados (no se traducen): `previsto`, `abierto`, `cerrado`, `descartado`.
 
 | Nº | Carpeta | Objetivo | Estado | Origen | Abierto | Cerrado |
 |---|---|---|---|---|---|---|
+| 01 | _docs/ciclos/01-primera-version | Primera versión de la web del despacho de abogados, mobile first y centrada en SEO local | abierto | kickoff | 2026-11-25 | |
 
 ## Siguiente identificador libre
 
